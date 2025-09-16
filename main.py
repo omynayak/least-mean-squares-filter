@@ -32,6 +32,9 @@ timeStamps = np.array(timeStamps)
 ppgData = np.array(ppgData)
 
 
+accX = []
+accY = []
+accZ = []
 accData = []
 with open("ACC.csv", mode="r") as file:
     data = csv.reader(file)
@@ -40,6 +43,9 @@ with open("ACC.csv", mode="r") as file:
         tempX = float(row[2])
         tempY = float(row[3])
         tempZ = float(row[4])
+        accX.append(tempX)
+        accY.append(tempY)
+        accZ.append(tempZ)
         mag = (tempX**2 + tempY**2 + tempZ**2) ** 0.5
         accData.append(mag)
 
@@ -50,25 +56,45 @@ cleaned_signal, motion_approx, weights = lms_filter(accData, ppgData, mu=1e-5, f
 
 
 plt.figure(figsize=(12,5))
-plt.subplot(1,3,1)
+plt.subplot(2,2,1)
+plt.plot(timeStamps, accX, label="X axis")
+plt.legend()
+plt.title("X axis Accelerometer")
+plt.grid()
+
+plt.subplot(2,2,2)
+plt.plot(timeStamps, accY, label="Y axis")
+plt.legend()
+plt.title("Y axis Accelerometer")
+
+plt.grid()
+plt.subplot(2,2,3)
+plt.plot(timeStamps, accZ, label="Z axis")
+plt.legend()
+plt.title("Z axis Accelerometer")
+
+plt.grid()
+plt.subplot(2,2,4)
+plt.plot(timeStamps, ppgData, label="PPG")
+plt.legend()
+plt.title("PPG Data")
+plt.grid()
+
+
+plt.figure(figsize=(12,5))
 plt.plot(timeStamps, ppgData, label="Noisy PPG")
 plt.plot(timeStamps, cleaned_signal, label="Cleaned PPG")
 plt.legend()
 plt.title("PPG before vs after LMS")
 plt.grid()
 
-
-plt.subplot(1,3,2)
-plt.plot(timeStamps, accData, label= "Accelerometer signals")
+plt.figure(figsize=(12,5))
+plt.plot(timeStamps, motion_approx, label="Noisy PPG")
+plt.plot(timeStamps, accData, label="Noisy PPG")
 plt.legend()
-plt.title("Accelerometer data plot")
+plt.title("PPG before vs after LMS")
 plt.grid()
 
-plt.subplot(1,3,3)
-plt.plot(timeStamps, motion_approx, label="Motion estimate")
-plt.legend()
-plt.title("Motion Artifact Estimated from ACC")
-plt.grid()
 
 plt.tight_layout()
 plt.show()
